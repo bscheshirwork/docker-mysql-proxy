@@ -58,9 +58,32 @@ services:
       - mysql
 ```
 
+# Query to stdout
+For `docker-compose up` without `-d` (`../mysql-proxy/main.lua`)
+```
+function read_query(packet)
+   if string.byte(packet) == proxy.COM_QUERY then
+	print(string.sub(packet, 2))
+   end
+end
+```
 
 # Query logging for mysql-proxy 
-https://gist.github.com/simonw/1039751
+
+```
+...
+    volumes:
+      - ../mysql-proxy/log.lua:/opt/log.lua
+      - ../mysql-proxy/mysql.log:/opt/mysql-proxy/mysql.log
+    environment:
+      PROXY_DB_PORT: 3306
+      REMOTE_DB_HOST: mysql
+      REMOTE_DB_PORT: 3306
+      PROXY_LUA_SCRIPT: "/opt/log.lua"
+...
+```
+
+`/mysql-proxy/log.lua` https://gist.github.com/simonw/1039751
 ```
 local log_file = '/opt/mysql-proxy/mysql.log'
 
@@ -77,17 +100,6 @@ function read_query( packet )
     end
 end
 ```
-
-# Query to stdout
-For `docker-compose up` without `-d`
-```
-function read_query(packet)
-   if string.byte(packet) == proxy.COM_QUERY then
-	print(string.sub(packet, 2))
-   end
-end
-```
-
 # thanks
 
 https://hub.docker.com/r/zwxajh/mysql-proxy
