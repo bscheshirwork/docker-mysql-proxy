@@ -105,7 +105,7 @@ end
 https://hub.docker.com/r/zwxajh/mysql-proxy
 https://hub.docker.com/r/gediminaspuksmys/mysqlproxy/
 
-#troubleshooting
+# troubleshooting
 If you can't create the chain `mysql` -> `mysql-proxy` -> `external client liten 0.0.0.0:3308`
 check extends ports on the `mysql` service and/or add `expose` directly
 ```
