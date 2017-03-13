@@ -84,7 +84,7 @@ end
 ...
 ```
 
-`/mysql-proxy/log.lua` https://gist.github.com/simonw/1039751
+`/mysql-proxy-conf/log.lua` https://gist.github.com/simonw/1039751
 ```
 local log_file = os.getenv("LOG_FILE")
 
