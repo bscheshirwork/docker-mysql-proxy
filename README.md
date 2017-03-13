@@ -48,12 +48,12 @@ services:
       - "3308:3306" #for external connection
     restart: always
     volumes: 
-      - ../mysql-proxy/main.lua:/opt/main.lua
+      - ../mysql-proxy-conf:/opt/mysql-proxy/conf
     environment:
       PROXY_DB_PORT: 3306
       REMOTE_DB_HOST: mysql
       REMOTE_DB_PORT: 3306
-      PROXY_LUA_SCRIPT: "/opt/main.lua"
+      PROXY_LUA_SCRIPT: "/opt/mysql-proxy/conf/main.lua"
     depends_on:
       - mysql
 ```
@@ -73,19 +73,19 @@ end
 ```
 ...
     volumes:
-      - ../mysql-proxy/log.lua:/opt/log.lua
-      - ../mysql-proxy/mysql.log:/opt/mysql-proxy/mysql.log
+      - ../mysql-proxy-conf:/opt/mysql-proxy/conf
+      - ../mysql-proxy-logs:/opt/mysql-proxy/logs
     environment:
       PROXY_DB_PORT: 3306
       REMOTE_DB_HOST: mysql
       REMOTE_DB_PORT: 3306
-      PROXY_LUA_SCRIPT: "/opt/log.lua"
+      PROXY_LUA_SCRIPT: "/opt/mysql-proxy/conf/log.lua"
 ...
 ```
 
 `/mysql-proxy/log.lua` https://gist.github.com/simonw/1039751
 ```
-local log_file = '/opt/mysql-proxy/mysql.log'
+local log_file = '/opt/mysql-proxy/logs/mysql.log'
 
 local fh = io.open(log_file, "a+")
 
@@ -105,6 +105,25 @@ end
 https://hub.docker.com/r/zwxajh/mysql-proxy
 https://hub.docker.com/r/gediminaspuksmys/mysqlproxy/
 
+# logrotate
+The image can be expand with `logrotate`
+Config file `/etc/logrotate.d/mysql-proxy` (approximate)
+
+```
+/opt/mysql-proxy/mysql.log {
+	weekly
+	missingok
+	rotate 35600
+	compress
+	delaycompress
+	notifempty
+	create 666 root root 
+	postrotate
+		/etc/init.d/mysql-proxy reload > /dev/null
+	endscript
+}
+```
+
 # troubleshooting
 If you can't create the chain `mysql` -> `mysql-proxy` -> `external client liten 0.0.0.0:3308`
 check extends ports on the `mysql` service and/or add `expose` directly
@@ -112,7 +131,3 @@ check extends ports on the `mysql` service and/or add `expose` directly
     expose:
       - "3306" #for service mysql-proxy
 ```
-
-You can create
- ```touch mysql-proxy/mysql.log```
-before run the suite
