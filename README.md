@@ -132,3 +132,5 @@ check extends ports on the `mysql` service and/or add `expose` directly
     expose:
       - "3306" #for service mysql-proxy
 ```
+
+> note: Log send to file with delay (buffering mechanism). You can restart the container for get the log immediately. 
