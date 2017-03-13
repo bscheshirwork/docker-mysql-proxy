@@ -17,18 +17,18 @@ RUN apt-get update && \
     chown -R root:root /opt/mysql-proxy
 RUN echo "#!/bin/bash\n\
 \n\
-/opt/mysql-proxy/bin/mysql-proxy \\\\\n\
+exec /opt/mysql-proxy/bin/mysql-proxy \\\\\n\
 --keepalive \\\\\n\
 --log-level=debug \\\\\n\
 --plugins=proxy \\\\\n\
 --proxy-address=\${PROXY_DB_HOST}:\${PROXY_DB_PORT} \\\\\n\
 --proxy-backend-addresses=\${REMOTE_DB_HOST}:\${REMOTE_DB_PORT} \\\\\n\
 --proxy-lua-script=\${PROXY_LUA_SCRIPT}\n\
-" >> /opt/run.sh && \
-    chmod u+x /opt/run.sh
+" >> /opt/entrypoint.sh && \
+    chmod u+x /opt/entrypoint.sh
 EXPOSE 4040 4041
 
-ENTRYPOINT [ "/opt/run.sh" ]
+ENTRYPOINT [ "/opt/entrypoint.sh" ]
 
 
 # For another derived image:
