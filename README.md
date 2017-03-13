@@ -53,7 +53,7 @@ services:
       PROXY_DB_PORT: 3306
       REMOTE_DB_HOST: mysql
       REMOTE_DB_PORT: 3306
-      PROXY_LUA_SCRIPT: "/opt/mysql-proxy/conf/main.lua"
+      LUA_SCRIPT: "/opt/mysql-proxy/conf/main.lua"
     depends_on:
       - mysql
 ```
@@ -79,13 +79,14 @@ end
       PROXY_DB_PORT: 3306
       REMOTE_DB_HOST: mysql
       REMOTE_DB_PORT: 3306
-      PROXY_LUA_SCRIPT: "/opt/mysql-proxy/conf/log.lua"
+      LUA_SCRIPT: "/opt/mysql-proxy/conf/log.lua"
+      LOG_FILE: "/opt/mysql-proxy/logs/mysql.log"
 ...
 ```
 
 `/mysql-proxy/log.lua` https://gist.github.com/simonw/1039751
 ```
-local log_file = '/opt/mysql-proxy/logs/mysql.log'
+local log_file = os.getenv("LOG_FILE")
 
 local fh = io.open(log_file, "a+")
 
