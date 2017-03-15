@@ -107,14 +107,14 @@ https://hub.docker.com/r/zwxajh/mysql-proxy
 https://hub.docker.com/r/gediminaspuksmys/mysqlproxy/
 
 # logrotate
-The image can be expand with `logrotate`
+The image can be expand with `logrotate` (tag with `-logrotate`)
 Config file `/etc/logrotate.d/mysql-proxy` (approximate)
 
 ```
 /opt/mysql-proxy/mysql.log {
 	weekly
 	missingok
-	rotate 35600
+	rotate 24
 	compress
 	delaycompress
 	notifempty
@@ -123,6 +123,12 @@ Config file `/etc/logrotate.d/mysql-proxy` (approximate)
 		/etc/init.d/mysql-proxy reload > /dev/null
 	endscript
 }
+```
+
+You can exec container and check manually
+```
+docker exec -ti dockerrun_db_1 /bin/bash
+logrotate -d -s /var/log/logstatus --force /etc/logrotate.d/mysql-proxy
 ```
 
 # troubleshooting

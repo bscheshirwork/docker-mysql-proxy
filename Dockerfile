@@ -29,7 +29,7 @@ cat >/etc/logrotate.d/mysql-proxy <<.\n\
     	notifempty\n\
     	create 666 root root\n\
     	postrotate\n\
-    		/etc/init.d/mysql-proxy reload > /dev/null\n\
+    		/opt/entrypoint.sh > /dev/null\n\
     	endscript\n\
     }\n\
 .\n\
