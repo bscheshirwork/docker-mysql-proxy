@@ -6,7 +6,9 @@ ENV MYSQL_PROXY_VERSION 0.8.5
 ENV MYSQL_PROXY_TAR_NAME mysql-proxy-$MYSQL_PROXY_VERSION-linux-debian6.0-x86-64bit
 
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get -y install wget && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y install \
+        logrotate \
+        wget && \
     wget https://downloads.mysql.com/archives/get/file/$MYSQL_PROXY_TAR_NAME.tar.gz && \
     tar -xzvf $MYSQL_PROXY_TAR_NAME.tar.gz && \
     mv $MYSQL_PROXY_TAR_NAME /opt/mysql-proxy && \
@@ -16,6 +18,21 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/ && \
     chown -R root:root /opt/mysql-proxy
 RUN echo "#!/bin/bash\n\
+\n\
+cat >/etc/logrotate.d/mysql-proxy <<.\n\
+\"\${LOG_FILE}\" {\n\
+    	weekly\n\
+    	missingok\n\
+    	rotate 24\n\
+    	compress\n\
+    	delaycompress\n\
+    	notifempty\n\
+    	create 666 root root\n\
+    	postrotate\n\
+    		/etc/init.d/mysql-proxy reload > /dev/null\n\
+    	endscript\n\
+    }\n\
+.\n\
 \n\
 exec /opt/mysql-proxy/bin/mysql-proxy \\\\\n\
 --keepalive \\\\\n\
