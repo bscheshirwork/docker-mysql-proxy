@@ -14,8 +14,8 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get -y remove wget && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/ && \
-    chown -R root:root /opt/mysql-proxy
-RUN echo "#!/bin/bash\n\
+    chown -R root:root /opt/mysql-proxy && \
+    echo "#!/bin/bash\n\
 \n\
 exec /opt/mysql-proxy/bin/mysql-proxy \\\\\n\
 --keepalive \\\\\n\
@@ -24,11 +24,12 @@ exec /opt/mysql-proxy/bin/mysql-proxy \\\\\n\
 --proxy-address=\${PROXY_DB_HOST}:\${PROXY_DB_PORT} \\\\\n\
 --proxy-backend-addresses=\${REMOTE_DB_HOST}:\${REMOTE_DB_PORT} \\\\\n\
 --proxy-lua-script=\${LUA_SCRIPT}\n\
-" >> /opt/entrypoint.sh && \
-    chmod u+x /opt/entrypoint.sh
+" >> /usr/local/bin//entrypoint.sh && \
+    chmod u+x /usr/local/bin/entrypoint.sh && \
+    ln -s /usr/local/bin/docker-entrypoint.sh /entrypoint.sh # shortcut
 EXPOSE 4040 4041
 
-ENTRYPOINT [ "/opt/entrypoint.sh" ]
+ENTRYPOINT [ "entrypoint.sh" ]
 
 
 # For another derived image:
